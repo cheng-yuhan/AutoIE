@@ -11,7 +11,7 @@ logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(name)s - %(leve
 logger = logging.getLogger(__name__)
 
 import numpy as np
-from autoie.datasets.base import NerDatasetReader
+from autoie.datasets.dataloader import DataLoader
 from autoie.utils.common import get_dicts, w2num, len_norm
 from autoie.auto_search import Search
 from autoie.tasks import NER
@@ -20,8 +20,8 @@ from autoie.pipeline import Input, OneHotEmbedding, BiLSTM, Dense, SparseCategor
 
 def ner_bilstm():
     # load dataset
-    ds_rd = NerDatasetReader()
-    dataset = ds_rd.read("./examples/datasets/conll2003_v2/")
+    ds_rd = DataLoader("./examples/datasets/conll2003_v2/", "conll")
+    dataset = ds_rd.read()
     w_dict, n_dict = get_dicts(dataset["train"])
     data_num = {}
     data_num["train"] = w2num(dataset["train"], w_dict, n_dict)
@@ -49,7 +49,6 @@ def ner_bilstm():
                       )
     searcher.search(x=train_x, y=train_y, objective="val_sparse_categorical_crossentropy", batch_size=128,
                     validation_split=0.1)
-
 
 if __name__ == "__main__":
     ner_bilstm()
