@@ -37,16 +37,18 @@ class Search(object):
         self.best_model = None
         self.need_fully_train = False
 
-    def search(self, x=None, y=None, objective=None, batch_size=None, validation_split=0.1):
+    def search(self, x=None, y=None, x_val=None, y_val=None, objective=None, batch_size=None, validation_split=0.1):
         # overwrite the objective
         self.objective = objective or 'mse'
         tuner = self._build_tuner(self.tuner, self.tuner_params)
         # show the search space
         tuner.search_space_summary()
 
-        # TODO:split dataset
-        # tuner.search(x=x, y=y, x_val=x_val, y_val=y_val, batch_size=batch_size )
-        tuner.search(x=x, y=y, batch_size=batch_size, validation_split=validation_split)
+        if x_val is not None and y_val is not None:
+            tuner.search(x=x, y=y, x_val=x_val, y_val=y_val, batch_size=batch_size)
+        else:
+            tuner.search(x=x, y=y, batch_size=batch_size, validation_split=validation_split)
+
         tuner.results_summary()
 
         best_pipe_lists = tuner.get_best_models(1)

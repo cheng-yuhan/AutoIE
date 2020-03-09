@@ -696,9 +696,16 @@ class PipeTuner(MultiExecutionTuner):
         # Update the new fit kwargs values
         fit_kwargs['x'] = fit_kwargs.get('x', None)
         fit_kwargs['y'] = fit_kwargs.get('y', None)
-        # fit_kwargs['validation_data'] = validation_data
+
+        x_val = fit_kwargs.pop('x_val', None)
+        y_val = fit_kwargs.pop('y_val', None)
+
+        if x_val is not None and y_val is not None:
+            fit_kwargs['validation_data'] = (x_val, y_val)
+        else:
+            fit_kwargs['validation_split'] = fit_kwargs.get('validation_split', 0.1)
+
         fit_kwargs['batch_size'] = fit_kwargs.get('batch_size', 32)
-        fit_kwargs['validation_split'] = fit_kwargs.get('validation_split', 0.1)
 
     def save_weights(self, trial, pipe):
         trial_dir = self.get_trial_dir(trial.trial_id)

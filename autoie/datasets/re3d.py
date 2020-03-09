@@ -1,6 +1,13 @@
-from autoie.datasets.dataset import Type2Dataset
+from autoie.datasets.dataset import Dataset
 
-class Re3dDataset(Type2Dataset):
+class Re3dDataset(Dataset):
+    """Dataset class for Re3d.
+
+    # Arguments
+        data_path: String. The path to a directory where
+            dataset is present. Defaults to None.
+    """
+
     def __init__(self, data_path):
         super().__init__(data_path)
 
@@ -8,4 +15,11 @@ class Re3dDataset(Type2Dataset):
         return super().read()
 
     def extract_tokens_and_tags(self, filename):
+        """Extract tokens and tags from the given file.
+
+        # Arguments
+            filename: String. This is the file that has to
+                be parsed to get the tokens and tags.
+        """
+
         return super().extract_tokens_and_tags(filename)
