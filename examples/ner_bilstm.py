@@ -19,9 +19,11 @@ from autoie.pipeline import Input, OneHotEmbedding, BiLSTM, Dense, SparseCategor
 def ner_bilstm():
     # load dataset
     ds_rd = DataLoader("./examples/datasets/conll2003_v2/", "conll")
-    train_x, train_y = ds_rd.read()
+    train_x, val_x, train_y, val_y = ds_rd.read()
     print(train_x.shape)
     print(train_y.shape)
+    print(val_x.shape)
+    print(val_y.shape)
 
     # model
     input = Input(shape=(80))
@@ -37,8 +39,7 @@ def ner_bilstm():
                       tuner='random',  # 'hyperband',
                       tuner_params={'max_trials': 100, 'overwrite': True},
                       )
-    searcher.search(x=train_x, y=train_y, objective="val_sparse_categorical_crossentropy", batch_size=128,
-                    validation_split=0.1)
+    searcher.search(x=train_x, y=train_y, x_val=val_x, y_val=val_y, objective="val_sparse_categorical_crossentropy", batch_size=128)
 
 if __name__ == "__main__":
     ner_bilstm()
