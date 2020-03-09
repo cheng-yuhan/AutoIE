@@ -1,7 +1,13 @@
-from autoie.datasets.dataset import Type1Dataset
-from nltk.corpus import conll2002
+from autoie.datasets.dataset import Dataset
 
-class CoNLLDataset(Type1Dataset):
+class CoNLLDataset(Dataset):
+    """Dataset class for CONLL.
+
+    # Arguments
+        data_path: String. The path to a directory where
+            dataset is present. Defaults to None.
+    """
+
     def __init__(self, data_path=None):
         if data_path is None:
             self.train_file = None
@@ -13,12 +19,11 @@ class CoNLLDataset(Type1Dataset):
         return super().read()
 
     def extract_tokens_and_tags(self, filename):
-        tokens_and_tags = []
+        """Extract tokens and tags from the given file.
 
-        if filename is None:
-            train_sents = list(conll2002.iob_sents(u'esp.train'))
-            for train_sent in train_sents:
-                tokens_and_tags.append(([x for x, _, _ in train_sent], [x for _, _, x in train_sent]))
-            return tokens_and_tags
+        # Arguments
+            filename: String. This is the file that has to be parsed to
+                get the tokens and tags.
+        """
 
         return super().extract_tokens_and_tags(filename)
