@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 from autoie.datasets.dataloader import DataLoader
 from autoie.auto_search import Search
 from autoie.tasks import NER
-from autoie.pipeline import Input, OneHotEmbedding, BiLSTM, Dense, SparseCategoricalCrossentropyOptimizer
+from autoie.pipeline import Input, OneHotEmbedding, BiLSTM, Dense, CRFOptimizer
 
 # load dataset
 ds_rd = DataLoader("./examples/datasets/conll2003_v2/", "conll")
@@ -28,7 +28,7 @@ output = OneHotEmbedding()(input)
 output = BiLSTM()(output)
 output = BiLSTM()(output)
 output = Dense()(output)
-output = SparseCategoricalCrossentropyOptimizer()(output)
+output = CRFOptimizer()(output)
 model = NER(inputs=input, outputs=output)
 
 # search

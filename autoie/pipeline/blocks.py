@@ -127,7 +127,7 @@ class Dense(Block):
         self.use_batchnorm = use_batchnorm
         self.dropout_rate = dropout_rate
         # self._check_fixed()
-        # self._hyperparameters = self._get_hyperparameters()
+        # self.hyperparameters = self._get_hyperparameters()
 
     def get_state(self):
         state = super().get_state()
@@ -171,6 +171,8 @@ class Dense(Block):
             output_node = tf.keras.layers.ReLU()(output_node)
             output_node = tf.keras.layers.Dropout(dropout_rate)(output_node)
         return output_node
+
+
 
 #
 #
