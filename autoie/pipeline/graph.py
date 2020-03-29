@@ -335,7 +335,7 @@ class KerasGraph(Graph, base.HyperModel):
         loss = []
         for output_node in self.outputs:
             block = output_node.in_blocks[0]
-            print( "str(type(block)):", str(type(block)) )
+            # print( "str(type(block)):", str(type(block)) )
             if 'optimizer' in str(type(block)):
                 # loss[block.name] = block.loss
                 loss.append(block.loss)

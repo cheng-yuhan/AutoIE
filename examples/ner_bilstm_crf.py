@@ -4,10 +4,15 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import os
 os.environ["CUDA_VISIBLE_DEVICES"] = "5"
 
+
+
 import logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
+
+import tensorflow as tf
+tf.config.experimental_run_functions_eagerly(True)
 
 from autoie.datasets.dataloader import DataLoader
 from autoie.auto_search import Search
@@ -37,4 +42,4 @@ searcher = Search(model=model,
                   tuner_params={'max_trials': 100, 'overwrite': True},
                   )
 searcher.search(x=train_x, y=train_y, x_val=val_x, y_val=val_y, objective="val_sparse_categorical_crossentropy",
-                batch_size=128)
+                batch_size=1024)
