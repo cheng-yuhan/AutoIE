@@ -335,6 +335,7 @@ class KerasGraph(Graph, base.HyperModel):
         loss = []
         for output_node in self.outputs:
             block = output_node.in_blocks[0]
+            # print( "str(type(block)):", str(type(block)) )
             if 'optimizer' in str(type(block)):
                 # loss[block.name] = block.loss
                 loss.append(block.loss)
@@ -343,12 +344,14 @@ class KerasGraph(Graph, base.HyperModel):
     def _compile_keras_model(self, hp, model):
         # Specify hyperparameters from compile(...)
         optimizer = hp.Choice('optimizer',
-                              ['adam',
+                              [''
+                               'adam',
                                # 'adadelta',
-                               "Adagrad",
-                               "RMSprop",
-                               "AdaMax",
-                               'sgd'])
+                               # "Adagrad",
+                               # "RMSprop",
+                               # "AdaMax",
+                               'sgd'
+                               ])
 
         model.compile(optimizer=optimizer,
                       metrics=self._get_metrics(),

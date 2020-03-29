@@ -9,10 +9,13 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(level
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
+import tensorflow as tf
+tf.config.experimental_run_functions_eagerly(True)
+
 from autoie.datasets.dataloader import DataLoader
 from autoie.auto_search import Search
 from autoie.tasks import NER
-from autoie.pipeline import Input, OneHotEmbedding, BiLSTM, Dense, SparseCategoricalCrossentropyOptimizer
+from autoie.pipeline import Input, OneHotEmbedding, BiLSTM, Dense, CRFOptimizer
 
 # load dataset
 ds_rd = DataLoader("./examples/datasets/conll2003_v2/", "conll")
@@ -28,7 +31,7 @@ output = OneHotEmbedding()(input)
 output = BiLSTM()(output)
 output = BiLSTM()(output)
 output = Dense()(output)
-output = SparseCategoricalCrossentropyOptimizer()(output)
+output = CRFOptimizer()(output)
 model = NER(inputs=input, outputs=output)
 
 # search
@@ -36,5 +39,5 @@ searcher = Search(model=model,
                   tuner='random',  # 'hyperband',
                   tuner_params={'max_trials': 100, 'overwrite': True},
                   )
-searcher.search(x=train_x, y=train_y, x_val=val_x, y_val=val_y, objective="val_sparse_categorical_crossentropy",
-                batch_size=128)
+searcher.search(x=train_x, y=train_y, x_val=val_x, y_val=val_y, objective="val_CRFloss",
+                batch_size=512)
