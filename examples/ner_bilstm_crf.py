@@ -25,6 +25,7 @@ print(train_y.shape)
 print(val_x.shape)
 print(val_y.shape)
 
+
 # model
 input = Input(shape=(80))
 output = OneHotEmbedding()(input)
