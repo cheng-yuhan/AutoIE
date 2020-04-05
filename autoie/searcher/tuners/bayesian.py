@@ -5,10 +5,10 @@ from scipy import optimize as scipy_optimize
 from sklearn import exceptions
 from sklearn import gaussian_process
 
-from autorecsys.searcher.core import hyperparameters as hp_module
-from autorecsys.searcher.core import trial as trial_lib
-from autorecsys.searcher.tuners.tuner import PipeTuner
-from autorecsys.searcher.core import oracle as oracle_module
+from autoie.searcher.core import hyperparameters as hp_module
+from autoie.searcher.core import trial as trial_lib
+from autoie.searcher.tuners.tuner import PipeTuner
+from autoie.searcher.core import oracle as oracle_module
 
 
 class BayesianOptimizationOracle(oracle_module.Oracle):
