@@ -344,8 +344,7 @@ class KerasGraph(Graph, base.HyperModel):
     def _compile_keras_model(self, hp, model):
         # Specify hyperparameters from compile(...)
         optimizer = hp.Choice('optimizer',
-                              [''
-                               'adam',
+                              ['adam',
                                # 'adadelta',
                                # "Adagrad",
                                # "RMSprop",

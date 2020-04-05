@@ -5,10 +5,10 @@ from scipy import optimize as scipy_optimize
 from sklearn import exceptions
 from sklearn import gaussian_process
 
-from ..engine import hyperparameters as hp_module
-from ..engine import multi_execution_tuner
-from ..engine import oracle as oracle_module
-from ..engine import trial as trial_lib
+from autoie.searcher.core import hyperparameters as hp_module
+from autoie.searcher.core import trial as trial_lib
+from autoie.searcher.tuners.tuner import PipeTuner
+from autoie.searcher.core import oracle as oracle_module
 
 
 class BayesianOptimizationOracle(oracle_module.Oracle):
@@ -218,7 +218,7 @@ class BayesianOptimizationOracle(oracle_module.Oracle):
                 score = trial.score
                 # Always frame the optimization as a minimization for scipy.minimize.
                 if self.objective.direction == 'max':
-                    score = -1*score
+                    score = -1 * score
             else:
                 continue
 
@@ -271,7 +271,7 @@ class BayesianOptimizationOracle(oracle_module.Oracle):
         return np.array(bounds)
 
 
-class BayesianOptimization(multi_execution_tuner.MultiExecutionTuner):
+class BayesianOptimization(PipeTuner):
     """BayesianOptimization tuning with Gaussian process.
 
     # Arguments:
@@ -309,7 +309,7 @@ class BayesianOptimization(multi_execution_tuner.MultiExecutionTuner):
     """
 
     def __init__(self,
-                 hypermodel,
+                 hypergraph,
                  objective,
                  max_trials,
                  num_initial_points=2,
@@ -318,14 +318,17 @@ class BayesianOptimization(multi_execution_tuner.MultiExecutionTuner):
                  tune_new_entries=True,
                  allow_new_entries=True,
                  **kwargs):
-        oracle = BayesianOptimizationOracle(
-            objective=objective,
-            max_trials=max_trials,
-            num_initial_points=num_initial_points,
-            seed=seed,
-            hyperparameters=hyperparameters,
-            tune_new_entries=tune_new_entries,
-            allow_new_entries=allow_new_entries)
-        super(BayesianOptimization, self, ).__init__(oracle=oracle,
-                                                     hypermodel=hypermodel,
+        oracle = BayesianOptimizationOracle(objective=objective,
+                                            max_trials=max_trials,
+                                            num_initial_points=num_initial_points,
+                                            seed=seed,
+                                            hyperparameters=hyperparameters,
+                                            tune_new_entries=tune_new_entries,
+                                            allow_new_entries=allow_new_entries)
+        super(BayesianOptimization, self, ).__init__(oracle,
+                                                     hypergraph,
                                                      **kwargs)
+
+    @classmethod
+    def get_name(cls):
+        return 'bayesian'

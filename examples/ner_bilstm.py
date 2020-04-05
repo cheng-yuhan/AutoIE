@@ -34,7 +34,7 @@ model = NER(inputs=input, outputs=output)
 # search
 searcher = Search(model=model,
                   tuner='random',  # 'hyperband',
-                  tuner_params={'max_trials': 100, 'overwrite': True},
+                  tuner_params={'max_trials': 2, 'overwrite': True},
                   )
 searcher.search(x=train_x, y=train_y, x_val=val_x, y_val=val_y, objective="val_sparse_categorical_crossentropy",
-                batch_size=128)
+                batch_size=2048, epochs = 10)

@@ -630,13 +630,18 @@ class MultiExecutionTuner(Tuner):
             fit_kwargs = copy.copy(fit_kwargs)
             callbacks = fit_kwargs.pop('callbacks', [])
             callbacks = self._deepcopy_callbacks(callbacks)
+
             self._configure_tensorboard_dir(callbacks, trial.trial_id, execution)
             callbacks.append(TunerCallback(self, trial))
             # Only checkpoint the best epoch across all executions.
             callbacks.append(model_checkpoint)
+            callbacks.append( tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=3) )
+
 
             model = self.hypermodel.build(trial.hyperparameters)
             model.summary()
+            print("fit_args", fit_args)
+            print("fit_kwargs", fit_kwargs)
             history = model.fit(*fit_args, **fit_kwargs, callbacks=callbacks)
 
             for metric, epoch_values in history.history.items():
