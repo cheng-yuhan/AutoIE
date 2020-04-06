@@ -72,7 +72,26 @@ class DataLoader:
             x_train, x_val = x[:split_index], x[split_index:]
             y_train, y_val = y[:split_index], y[split_index:]
 
-        return x_train, x_val, y_train, y_val
+                if dataset['test'] is not None:
+
+            w_dict, n_dict = get_dicts(dataset["test"])
+
+            data_num = {}
+            data_num["test"] = w2num(dataset["test"], w_dict, n_dict)
+
+            data_norm = {}
+            data_norm["test"] = len_norm(data_num["test"])
+            test_data = np.array(data_norm["test"])
+
+            x_test = test_data[:, 0, :]
+            y_test = test_data[:, 1, :]
+        else:
+            split_index = int(0.1 * len(x_train))
+            x_train, x_val = x_train[:split_index], x_train[split_index:]
+            y_train, y_val = y_train[:split_index], y_train[split_index:]
+
+        # return x_train, x_val, y_train, y_val
+        return x_train, x_val, x_test, y_train, y_val, y_test
 
     def extract_tokens_and_tags(self, filename):
         """Extract tokens and tags from the given file.
