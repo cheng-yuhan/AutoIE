@@ -172,7 +172,60 @@ class Dense(Block):
             output_node = tf.keras.layers.Dropout(dropout_rate)(output_node)
         return output_node
 
+class GRU(Block):
+    def __init__(self,
+                 units=None,
+                 activation=None,
+                 recurrent_activation = None,
+                 use_bias=None,
+                 dropout_rate=None,
+                 recurrent_dropout_rate=None,
+                 use_batchnorm=None,
+                 **kwargs):
+        super().__init__(**kwargs)
+        self.units = units
+        self.activation = activation
+        self.recurrent_activation = recurrent_activation
+        self.use_bias = use_bias
+        self.dropout_rate = dropout_rate
+        self.recurrent_dropout_rate = recurrent_dropout_rate
+        self.use_batchnorm = use_batchnorm
 
+    def get_state(self):
+        state = super().get_state()
+        state.update({
+            'units': self.units,
+            'recurrent_dropout_rate': self.recurrent_dropout_rate,
+            'use_batchnorm': self.use_batchnorm,
+            'dropout_rate': self.dropout_rate})
+        return state
+
+    def set_state(self, state):
+        super().set_state(state)
+        self.units = state['units']
+        self.recurrent_dropout_rate = state['recurrent_dropout_rate']
+        self.use_batchnorm = state['use_batchnorm']
+        self.dropout_rate = state['dropout_rate']
+
+    def build(self, hp, inputs= None):
+
+        output_node = inputs
+        units = self.units or hp.Choice('units', [32, 64, 256, 512, 1024], default=64)
+        recurrent_activation = self.recurrent_activation or hp.Choice("recurrent_activation",["tanh", "relu", "sigmoid", "selu", "elu"],
+                                                  default="sigmoid" )
+        activation = self.activation or hp.Choice('activation', ["tanh", "relu", "sigmoid", "selu", "elu"],
+                                                  default="tanh")
+        dropout_rate = self.dropout_rate or hp.Choice('dropout_rate',
+                                                      [0.0, 0.25, 0.5],
+                                                      default=0)
+        recurrent_dropout_rate = self.recurrent_dropout_rate or hp.Choice('recurrent_dropout_rate',
+                                                                          [0.0, 0.25, 0.5],
+                                                                          default=0)
+        output_node =tf.keras.layers.GRU (units=units, activation=activation, return_sequences=True,
+                                          dropout=dropout_rate, recurrent_dropout = recurrent_dropout_rate,
+                                          recurrent_activation=recurrent_activation)(output_node)
+        print("output_node", output_node.shape)
+        return output_node
 
 #
 #

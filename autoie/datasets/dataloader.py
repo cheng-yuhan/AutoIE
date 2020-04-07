@@ -72,7 +72,7 @@ class DataLoader:
             x_train, x_val = x[:split_index], x[split_index:]
             y_train, y_val = y[:split_index], y[split_index:]
 
-                if dataset['test'] is not None:
+        if dataset['test'] is not None:
 
             w_dict, n_dict = get_dicts(dataset["test"])
 
