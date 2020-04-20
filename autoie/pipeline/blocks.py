@@ -227,6 +227,52 @@ class GRU(Block):
         print("output_node", output_node.shape)
         return output_node
 
+class TextCNN(Block):
+    def __init__(self,
+                 units=None,
+                 activation=None,
+                 use_bias=None,
+                 use_batchnorm=None,
+                 kernel_size = None,
+                 **kwargs):
+        super().__init__(**kwargs)
+        self.units = units
+        self.activation = activation
+        self.use_bias = use_bias
+        self.use_batchnorm = use_batchnorm
+        self.kernel_size = kernel_size
+
+    def get_state(self):
+        state = super().get_state()
+        state.update({
+            'units': self.units,
+            'use_batchnorm': self.use_batchnorm,
+            'kernel_size': self.kernel_size})
+        return state
+
+    def set_state(self, state):
+        super().set_state(state)
+        self.units = state['units']
+        self.use_batchnorm = state['use_batchnorm']
+        self.kernel_size = state['kernel_size']
+
+    def build(self, hp, inputs = None):
+        #inputs = nest.flatten(inputs)
+        input_node = tf.concat(inputs, axis=1)
+        outputnode = input_node
+        #print("cnn input",outputnode)
+        units = self.units or hp.Choice('units', [32, 64, 256, 512, 1024], default=64)
+        activation = self.activation or hp.Choice('activation', ["tanh", "relu", "sigmoid", "selu", "elu"],
+                                                  default="tanh")
+        kernel_size = self.kernel_size or hp.Choice("kernel_size", [3,4,5,6], default=5)
+        for i in range(2, kernel_size):
+            outputnode = tf.keras.layers.Conv1D(filters=units, kernel_size= kernel_size,activation=activation, padding= "same" )(outputnode)
+            if i >2 :
+                output = tf.concat([output,outputnode],axis=2)
+            else:
+                output = outputnode
+        return output
+
 #
 #
 # class HyperInteraction(Block):
