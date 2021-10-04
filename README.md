@@ -1,2 +1,2 @@
 # AutoIE
-This is an AutoML framework to sovle NLP problems based on Tensorflow
+Ts is an AutoML framework to sovle NLP problems based on Tensorflow
